@@ -1,0 +1,44 @@
+import { Injectable } from '@nestjs/common';
+import { AbstractUserRepository } from '@user/application/ports/user.repository';
+import { UserM } from '@user/domain/model/user';
+import { PrismaService } from '@common/database/infra/persistence/prisma.service';
+
+@Injectable()
+export class PrismaUserRepository implements AbstractUserRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  insert(user: UserM): Promise<UserM> {
+    return this.prisma.user.create({
+      data: user,
+    });
+  }
+
+  getUserByEmail(email: string): Promise<UserM> {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
+  getUserById(id: string): Promise<UserM> {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  getUsers(): Promise<UserM[]> {
+    return this.prisma.user.findMany();
+  }
+
+  updateUser(id: string, user: Omit<UserM, 'password'>): Promise<UserM> {
+    return this.prisma.user.update({
+      where: { id },
+      data: user,
+    });
+  }
+
+  removeUser(id: string) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
+}
