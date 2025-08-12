@@ -1,8 +1,10 @@
+import { Inject } from '@nestjs/common';
+
 import { AbstractUserRepository } from '@user/application/ports/user.repository';
 import { AbstractLogger } from '@common/logger/domain/logger';
 import { UserM } from '@user/domain/model/user';
-import { Inject } from '@nestjs/common';
 import { AbstractException } from '@common/exceptions/domain/exception';
+import { Prisma } from 'generated/prisma';
 
 export class UpdateUserUseCase {
   constructor(
@@ -29,11 +31,13 @@ export class UpdateUserUseCase {
         'User have been updated',
       );
       return updated;
-    } catch {
-      this.exceptionsService.badRequestException({
-        message: 'Failed To Update User',
-        codeError: 400,
-      });
+    } catch (e) {
+      if (!(e instanceof Prisma.PrismaClientKnownRequestError)) {
+        this.exceptionsService.badRequestException({
+          message: 'Failed To Update User',
+          codeError: 400,
+        });
+      }
     }
   }
 }

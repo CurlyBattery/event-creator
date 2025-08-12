@@ -6,8 +6,9 @@ import {
   HttpStatus,
   Inject,
 } from '@nestjs/common';
+
 import { AbstractLogger } from '@common/logger/domain/logger';
-import { IError } from '@common/filters/domain/error';
+import { IError } from '@common/filters/all/domain/error';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {

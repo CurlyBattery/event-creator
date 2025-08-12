@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, Scope } from '@nestjs/common';
+import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
+
+import { AllExceptionFilter } from '@common/filters/all/infra/persistence/all-exception.filter';
+import { PrismaExceptionFilter } from '@common/filters/prisma/infra/persistence/prisma-exception.filter';
 import { LoggerModule } from '@common/logger/logger.module';
-import { APP_FILTER } from '@nestjs/core';
-import { AllExceptionFilter } from '@common/filters/infra/persistence/all-exception.filter';
 
 @Module({
   imports: [LoggerModule],
@@ -9,6 +11,14 @@ import { AllExceptionFilter } from '@common/filters/infra/persistence/all-except
     {
       provide: APP_FILTER,
       useClass: AllExceptionFilter,
+      scope: Scope.REQUEST,
+    },
+    {
+      provide: APP_FILTER,
+      useFactory: (httpAdapterHost: HttpAdapterHost) => {
+        return new PrismaExceptionFilter(httpAdapterHost.httpAdapter);
+      },
+      inject: [HttpAdapterHost],
     },
   ],
 })
