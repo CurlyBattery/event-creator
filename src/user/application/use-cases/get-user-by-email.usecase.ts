@@ -1,12 +1,12 @@
-import { AbstractUserRepository } from '@user/application/ports/user.repository';
 import { UserM } from '@user/domain/model/user';
 import { AbstractException } from '@common/exceptions/domain/exception';
 import { Inject } from '@nestjs/common';
+import { UserRepository } from '@user/infra/ports/user.repository';
 
 export class GetUserByEmailUseCase {
   constructor(
-    @Inject(AbstractUserRepository)
-    private readonly userRepository: AbstractUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
     @Inject(AbstractException)
     private readonly exceptionsService: AbstractException,
   ) {}

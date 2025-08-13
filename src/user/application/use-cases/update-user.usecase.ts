@@ -1,21 +1,21 @@
 import { Inject } from '@nestjs/common';
 
-import { AbstractUserRepository } from '@user/application/ports/user.repository';
 import { AbstractLogger } from '@common/logger/domain/logger';
 import { UserM } from '@user/domain/model/user';
 import { AbstractException } from '@common/exceptions/domain/exception';
 import { Prisma } from 'generated/prisma';
+import { UserRepository } from '@user/infra/ports/user.repository';
 
 export class UpdateUserUseCase {
   constructor(
-    @Inject(AbstractUserRepository)
-    private readonly userRepository: AbstractUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
     @Inject(AbstractLogger)
     private readonly logger: AbstractLogger,
     private readonly exceptionsService: AbstractException,
   ) {}
 
-  async execute(id: string, user: Omit<UserM, 'password'>) {
+  async execute(id: string, user: Partial<Omit<UserM, 'password'>>) {
     try {
       const exists = await this.userRepository.getUserById(id);
       if (!exists) {

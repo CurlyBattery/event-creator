@@ -1,10 +1,10 @@
-import { AbstractUserRepository } from '@user/application/ports/user.repository';
 import { UserM } from '@user/domain/model/user';
 import { AbstractException } from '@common/exceptions/domain/exception';
+import { UserRepository } from '@user/infra/ports/user.repository';
 
 export class GetUserByIdUseCase {
   constructor(
-    private readonly userRepository: AbstractUserRepository,
+    private readonly userRepository: UserRepository,
     private readonly exceptionsService: AbstractException,
   ) {}
 

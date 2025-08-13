@@ -1,14 +1,14 @@
 import { AbstractLogger } from '@common/logger/domain/logger';
 import { Inject } from '@nestjs/common';
-import { AbstractUserRepository } from '@user/application/ports/user.repository';
 import { UserM } from '@user/domain/model/user';
 import { AbstractException } from '@common/exceptions/domain/exception';
+import { UserRepository } from '@user/infra/ports/user.repository';
 
 export class CreateUserUseCase {
   constructor(
     @Inject(AbstractLogger) private logger: AbstractLogger,
-    @Inject(AbstractUserRepository)
-    private readonly userRepository: AbstractUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
     @Inject(AbstractException)
     private readonly exceptionsService: AbstractException,
   ) {}
@@ -21,7 +21,7 @@ export class CreateUserUseCase {
         codeError: 409,
       });
     }
-
+    console.log(exists);
     const result = await this.userRepository.insert(user);
     this.logger.log(
       `${CreateUserUseCase.name} execute`,

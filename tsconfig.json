@@ -21,7 +21,9 @@
       "@user": ["src/user"],
       "@user/*": ["src/user/*"],
       "@common": ["src/common"],
-      "@common/*": ["src/common/*"]
+      "@common/*": ["src/common/*"],
+      "@auth": ["src/auth"],
+      "@auth/*": ["src/auth/*"]
     }
   }
 }

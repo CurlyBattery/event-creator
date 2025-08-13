@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { AbstractUserRepository } from '@user/application/ports/user.repository';
 import { UserM } from '@user/domain/model/user';
 import { PrismaService } from '@common/database/infra/persistence/prisma.service';
+import { UserRepository } from '@user/infra/ports/user.repository';
 
 @Injectable()
-export class PrismaUserRepository implements AbstractUserRepository {
+export class RealUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   insert(user: UserM): Promise<UserM> {

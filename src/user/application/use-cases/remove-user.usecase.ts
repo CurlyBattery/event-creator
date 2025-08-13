@@ -1,12 +1,12 @@
-import { AbstractUserRepository } from '@user/application/ports/user.repository';
 import { AbstractLogger } from '@common/logger/domain/logger';
 import { AbstractException } from '@common/exceptions/domain/exception';
 import { Inject } from '@nestjs/common';
+import { UserRepository } from '@user/infra/ports/user.repository';
 
 export class RemoveUserUseCase {
   constructor(
-    @Inject(AbstractUserRepository)
-    private readonly userRepository: AbstractUserRepository,
+    @Inject(UserRepository)
+    private readonly userRepository: UserRepository,
     @Inject(AbstractLogger)
     private readonly logger: AbstractLogger,
     @Inject(AbstractException)
