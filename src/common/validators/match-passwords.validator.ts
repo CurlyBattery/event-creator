@@ -14,7 +14,7 @@ export class IsMatchPasswords implements ValidatorConstraintInterface {
     const obj = validationArguments.object as SignUpDto;
     return value === obj.password;
   }
-  defaultMessage?(): string {
+  defaultMessage(): string {
     return 'passwords do not match';
   }
 }

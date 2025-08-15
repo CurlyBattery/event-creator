@@ -17,14 +17,28 @@ export class RealRefreshRepository implements RefreshRepository {
     });
   }
 
-  updateRefresh(
-    uuid: string,
-    refresh: Partial<RefreshTokenM>,
-  ): Promise<RefreshTokenM> {
-    return this.prisma.refreshToken.update({
+  getRefreshById(uuid: string): Promise<RefreshTokenM> {
+    return this.prisma.refreshToken.findUnique({
       where: { uuid },
-      data: {
+    });
+  }
+
+  async updateRefresh(
+    refresh: Partial<RefreshTokenM> & { uuid: string },
+  ): Promise<RefreshTokenM> {
+    console.log(refresh.userId);
+    const user = await this.prisma.refreshToken.findUnique({
+      where: { userId: refresh.userId },
+    });
+    console.log(user);
+
+    return this.prisma.refreshToken.upsert({
+      where: { userId: refresh.userId },
+      update: refresh,
+      create: {
         uuid: refresh.uuid,
+        exp: refresh.exp,
+        userId: refresh.userId,
       },
     });
   }

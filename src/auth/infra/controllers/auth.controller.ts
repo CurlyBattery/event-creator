@@ -25,6 +25,7 @@ import { AuthService } from '@auth/infra/ports/auth.service';
 import { ConfigService } from '@nestjs/config';
 import { LocalGuard } from '@auth/infra/guards/local.guard';
 import { SignInDto } from '@auth/infra/controllers/dto/sign-in.dto';
+import { Cookies } from '@common/decorators/cookie.decorator';
 
 export const REFRESH_TOKEN = 'refreshtoken';
 
@@ -57,7 +58,6 @@ export class AuthController {
   @UseGuards(LocalGuard)
   @Post('sign-in')
   async signIn(@Body() { email }: SignInDto, @Res() response: Response) {
-    // проверка соотвествия пароля с тем что есть в бд
     // создание access токена
     // создание refresh токена
     // перезапись refresh токена в бд
@@ -66,18 +66,18 @@ export class AuthController {
     // размещение рефреш токена в cookie
     this.setRefreshTokenToCookie(response, refreshToken);
     // возвращение токенов
-    return { accessToken, refreshToken };
+    response.status(HttpStatus.CREATED).json({ accessToken, refreshToken });
+  }
+
+  @Post('log-out')
+  async logout(@Cookies(REFRESH_TOKEN) refreshToken: string) {
+    await this.authService.logout({ uuid: refreshToken });
   }
 
   setRefreshTokenToCookie(response: Response, refreshToken: string) {
     response.cookie(REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
-      sameSite: 'lax',
       maxAge: this.configService.get('AGE_REFRESH'),
-      secure:
-        this.configService.get<string>('NODE_ENV', 'development') ===
-        'production',
-      path: '/auth',
     });
   }
 }

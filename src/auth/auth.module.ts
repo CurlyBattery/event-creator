@@ -10,6 +10,10 @@ import { RealHashingService } from '@auth/infra/adapters/real-hashing.service';
 import { JwtStrategy } from '@auth/infra/strategies/jwt.strategy';
 import { PrismaModule } from '@common/database/prisma.module';
 import { RefreshRepositoryModule } from '@auth/infra/adapters/repositories/refresh-repository.module';
+import { LocalStrategy } from '@auth/infra/strategies/local.strategy';
+import { ExceptionsModule } from '@common/exceptions/exceptions.module';
+
+const Strategies = [JwtStrategy, LocalStrategy];
 
 @Module({
   imports: [
@@ -17,6 +21,7 @@ import { RefreshRepositoryModule } from '@auth/infra/adapters/repositories/refre
     AuthUseCasesProxyModule.register(),
     PrismaModule,
     RefreshRepositoryModule,
+    ExceptionsModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -28,7 +33,7 @@ import { RefreshRepositoryModule } from '@auth/infra/adapters/repositories/refre
       provide: HashingService,
       useClass: RealHashingService,
     },
-    JwtStrategy,
+    ...Strategies,
   ],
   exports: [],
 })
