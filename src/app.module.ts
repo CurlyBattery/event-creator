@@ -36,6 +36,7 @@ const infrastructureModules: NestModuleImport[] = [
     validationSchema: Joi.object({
       JWT_SECRET: Joi.string().required(),
       EXPIRES_IN: Joi.string().required(),
+      AGE_REFRESH: Joi.string().required(),
       FRONTEND_URL: Joi.string().required(),
     }),
   }),

@@ -21,8 +21,8 @@ export class CreateUserUseCase {
         codeError: 409,
       });
     }
-    console.log(exists);
     const result = await this.userRepository.insert(user);
+
     this.logger.log(
       `${CreateUserUseCase.name} execute`,
       'New user have been inserted',

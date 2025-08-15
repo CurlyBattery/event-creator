@@ -10,6 +10,7 @@ import { AuthUseCasesProxyModule } from '@auth/infra/usecases-proxy/auth-usecase
 import { UseCaseProxy } from '@common/usecase-proxy/domain/use-case-proxy';
 import { GenerateAccessTokenUseCase } from '@auth/application/use-cases/generate-access-token.usecase';
 import { GenerateRefreshTokenUseCase } from '@auth/application/use-cases/generate-refresh-token.usecase';
+import { CreateRefreshUseCase } from '@auth/application/use-cases/create-refresh.usecase';
 
 @Injectable()
 export class RealAuthService implements AuthService {
@@ -21,6 +22,8 @@ export class RealAuthService implements AuthService {
     private readonly generateAccessTokenUseCaseProxy: UseCaseProxy<GenerateAccessTokenUseCase>,
     @Inject(AuthUseCasesProxyModule.POST_GEN_REFRESH_USECASES_PROXY)
     private readonly generateRefreshTokenUseCaseProxy: UseCaseProxy<GenerateRefreshTokenUseCase>,
+    @Inject(AuthUseCasesProxyModule.POST_SAVE_REFRESH_USECASES_PROXY)
+    private readonly createRefreshTokenUseCaseProxy: UseCaseProxy<CreateRefreshUseCase>,
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserM> {
@@ -35,29 +38,43 @@ export class RealAuthService implements AuthService {
   }
 
   async register(email: string, password: string): Promise<TokensM> {
-    // генерация refresh токена
-    const refreshToken = await this.generateRefreshTokenUseCaseProxy
-      .getInstance()
-      .execute();
-
     // хэширование пароля
     const hashedPassword = await this.hashingService.hashPlain(password);
+
+    const user = await this.commandBus.execute(
+      new CreateUserCommand(email, hashedPassword),
+    );
+
+    const { accessToken, refreshToken } = await this.issuingTokens(user);
 
     // хширование refresh токена
     const hashedRefreshToken =
       await this.hashingService.hashPlain(refreshToken);
 
-    const user = await this.commandBus.execute(
-      new CreateUserCommand(email, hashedRefreshToken, hashedPassword),
-    );
-    console.log(user);
+    // сохранение рефреш токена
+    await this.createRefreshTokenUseCaseProxy
+      .getInstance()
+      .execute({ uuid: hashedRefreshToken, userId: user.id });
 
-    // генерация access токена
+    return { accessToken, refreshToken };
+  }
+
+  async login(email: string): Promise<TokensM> {
+    const user = await this.queryBus.execute(new GetUserByEmailQuery(email));
+
+    const { accessToken, refreshToken } = await this.issuingTokens(user);
+
+    return { accessToken, refreshToken };
+  }
+
+  private async issuingTokens(user: UserM): Promise<TokensM> {
     const accessToken = await this.generateAccessTokenUseCaseProxy
       .getInstance()
       .execute(user.id);
+    const refreshToken = await this.generateRefreshTokenUseCaseProxy
+      .getInstance()
+      .execute();
 
-    console.log(accessToken);
     return { accessToken, refreshToken };
   }
 }

@@ -41,11 +41,11 @@ export class AuthController {
       email,
       password,
     );
-    console.log(Date.now());
     // размещение рефреш токена в куки
     response.cookie(REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
       sameSite: 'lax',
+      maxAge: this.configService.get<number>('AGE_REFRESH_COOKIE'),
       secure:
         this.configService.get<string>('NODE_ENV', 'development') ===
         'production',
@@ -60,4 +60,16 @@ export class AuthController {
   authenticate(@AuthUser() user: AccessTokenPayload) {
     return user;
   }
+
+  // @UseGuards(LocalGuard)
+  // @Post('sign-in')
+  // signIn(@Body() signInDto: SignInDto) {
+  //   // проверка соотвествия пароля с тем что есть в бд
+  //   // создание access токена
+  //   // создание refresh токена
+  //   // перезапись refresh токена в бд
+  //   // выдача токенов
+  //   // размещение рефреш токена в cookie
+  //   // ывзвращение токенов
+  // }
 }

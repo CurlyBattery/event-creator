@@ -19,10 +19,10 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute(command: CreateUserCommand): Promise<UserM> {
-    const { email, refreshToken, password } = command;
+    const { email, password } = command;
     const user = await this.createUserUseCaseProxy
       .getInstance()
-      .execute({ email, refreshToken, password });
+      .execute({ email, password });
     // отправление евента
     return user;
   }

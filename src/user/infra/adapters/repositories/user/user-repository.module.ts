@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { RealUserRepository } from '@user/infra/adapters/repositories/real-user.repository';
 import { UserRepository } from '@user/infra/ports/user.repository';
+import { RealUserRepository } from '@user/infra/adapters/repositories/user/real-user.repository';
 
 @Module({
   providers: [

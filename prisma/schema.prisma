@@ -15,16 +15,26 @@ datasource db {
 }
 
 model User {
-  id           String @id @default(uuid())
-  email        String @unique
-  password     String
-  refreshToken String @map("refresh_token")
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
 
-  events   Event[]
-  comments Comment[]
-  subs     Subscription[]
+  events       Event[]
+  comments     Comment[]
+  subs         Subscription[]
+  refreshToken RefreshToken?
 
   @@map("users")
+}
+
+model RefreshToken {
+  uuid   String   @id @unique @map("refresh_token")
+  userId String   @unique @map("user_id")
+  exp    DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
 }
 
 model Event {

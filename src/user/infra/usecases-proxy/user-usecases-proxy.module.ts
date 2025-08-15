@@ -11,8 +11,8 @@ import { createUseCaseProvider } from '@common/config/usecase-proxy.config';
 import { GetUsersUseCase } from '@user/application/use-cases/get-users.usecase';
 import { UpdateUserUseCase } from '@user/application/use-cases/update-user.usecase';
 import { RemoveUserUseCase } from '@user/application/use-cases/remove-user.usecase';
-import { UserRepositoryModule } from '@user/infra/adapters/repositories/user-repository.module';
 import { UserRepository } from '@user/infra/ports/user.repository';
+import { UserRepositoryModule } from '@user/infra/adapters/repositories/user/user-repository.module';
 
 @Module({})
 export class UserUseCasesProxyModule {

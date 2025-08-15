@@ -6,7 +6,15 @@ import { LoggerModule } from '@common/logger/logger.module';
 import { ExceptionsModule } from '@common/exceptions/exceptions.module';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CreateUserHandler } from '@user/application/handlers/create-user.handler';
-import { UserRepositoryModule } from '@user/infra/adapters/repositories/user-repository.module';
+import { UserRepositoryModule } from '@user/infra/adapters/repositories/user/user-repository.module';
+import { GetUserByEmailHandler } from '@user/application/handlers/get-user-by-email.handler';
+import { GetUserByIdHandler } from '@user/application/handlers/get-user-by-id.handler';
+
+const QueryHandlers = [
+  CreateUserHandler,
+  GetUserByIdHandler,
+  GetUserByEmailHandler,
+];
 
 @Module({
   imports: [
@@ -17,6 +25,6 @@ import { UserRepositoryModule } from '@user/infra/adapters/repositories/user-rep
     CqrsModule,
   ],
   controllers: [UserController],
-  providers: [CreateUserHandler],
+  providers: [...QueryHandlers],
 })
 export class UserModule {}
