@@ -23,6 +23,8 @@ import { AccessTokenPayload } from '@auth/infra/types/access-token.payload';
 import { AuthUser } from '@common/decorators/auth-user.decorator';
 import { AuthService } from '@auth/infra/ports/auth.service';
 import { ConfigService } from '@nestjs/config';
+import { LocalGuard } from '@auth/infra/guards/local.guard';
+import { SignInDto } from '@auth/infra/controllers/dto/sign-in.dto';
 
 export const REFRESH_TOKEN = 'refreshtoken';
 
@@ -41,16 +43,7 @@ export class AuthController {
       email,
       password,
     );
-    // размещение рефреш токена в куки
-    response.cookie(REFRESH_TOKEN, refreshToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: Number(this.configService.get<number>('AGE_REFRESH')),
-      secure:
-        this.configService.get<string>('NODE_ENV', 'development') ===
-        'production',
-      path: '/',
-    });
+    this.setRefreshTokenToCookie(response, refreshToken);
 
     response.status(HttpStatus.CREATED).json({ accessToken, refreshToken });
   }
@@ -61,15 +54,30 @@ export class AuthController {
     return user;
   }
 
-  // @UseGuards(LocalGuard)
-  // @Post('sign-in')
-  // signIn(@Body() signInDto: SignInDto) {
-  //   // проверка соотвествия пароля с тем что есть в бд
-  //   // создание access токена
-  //   // создание refresh токена
-  //   // перезапись refresh токена в бд
-  //   // выдача токенов
-  //   // размещение рефреш токена в cookie
-  //   // ывзвращение токенов
-  // }
+  @UseGuards(LocalGuard)
+  @Post('sign-in')
+  async signIn(@Body() { email }: SignInDto, @Res() response: Response) {
+    // проверка соотвествия пароля с тем что есть в бд
+    // создание access токена
+    // создание refresh токена
+    // перезапись refresh токена в бд
+    // выдача токенов
+    const { accessToken, refreshToken } = await this.authService.login(email);
+    // размещение рефреш токена в cookie
+    this.setRefreshTokenToCookie(response, refreshToken);
+    // возвращение токенов
+    return { accessToken, refreshToken };
+  }
+
+  setRefreshTokenToCookie(response: Response, refreshToken: string) {
+    response.cookie(REFRESH_TOKEN, refreshToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: this.configService.get('AGE_REFRESH'),
+      secure:
+        this.configService.get<string>('NODE_ENV', 'development') ===
+        'production',
+      path: '/auth',
+    });
+  }
 }

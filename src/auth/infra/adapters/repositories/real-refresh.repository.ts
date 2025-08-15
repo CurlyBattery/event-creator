@@ -8,8 +8,6 @@ export class RealRefreshRepository implements RefreshRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   insert(refresh: RefreshTokenM): Promise<RefreshTokenM> {
-    console.log('PrismaService available:', !!this.prisma);
-
     return this.prisma.refreshToken.create({
       data: {
         uuid: refresh.uuid,

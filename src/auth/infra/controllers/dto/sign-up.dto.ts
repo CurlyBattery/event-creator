@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  Validate,
+} from 'class-validator';
+import { IsMatchPasswords } from '@common/validators/match-passwords.validator';
 
 export class SignUpDto {
   @IsEmail()
@@ -11,4 +18,9 @@ export class SignUpDto {
   password: string;
 
   // сделать repeat password
+  @Validate(IsMatchPasswords)
+  @IsString()
+  @MinLength(6)
+  @IsNotEmpty()
+  repeatPassword: string;
 }
