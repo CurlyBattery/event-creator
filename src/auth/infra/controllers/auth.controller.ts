@@ -45,7 +45,7 @@ export class AuthController {
     response.cookie(REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
       sameSite: 'lax',
-      maxAge: this.configService.get<number>('AGE_REFRESH_COOKIE'),
+      maxAge: Number(this.configService.get<number>('AGE_REFRESH')),
       secure:
         this.configService.get<string>('NODE_ENV', 'development') ===
         'production',

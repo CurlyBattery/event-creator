@@ -8,11 +8,16 @@ import { RealAuthService } from '@auth/infra/adapters/real-auth.service';
 import { HashingService } from '@auth/infra/ports/hashing.service';
 import { RealHashingService } from '@auth/infra/adapters/real-hashing.service';
 import { JwtStrategy } from '@auth/infra/strategies/jwt.strategy';
-import { RefreshRepository } from '@auth/infra/ports/refresh.repository';
-import { RealRefreshRepository } from '@auth/infra/adapters/repositories/real-refresh.repository';
+import { PrismaModule } from '@common/database/prisma.module';
+import { RefreshRepositoryModule } from '@auth/infra/adapters/repositories/refresh-repository.module';
 
 @Module({
-  imports: [CqrsModule, AuthUseCasesProxyModule.register()],
+  imports: [
+    CqrsModule,
+    AuthUseCasesProxyModule.register(),
+    PrismaModule,
+    RefreshRepositoryModule,
+  ],
   controllers: [AuthController],
   providers: [
     {
@@ -22,10 +27,6 @@ import { RealRefreshRepository } from '@auth/infra/adapters/repositories/real-re
     {
       provide: HashingService,
       useClass: RealHashingService,
-    },
-    {
-      provide: RefreshRepository,
-      useClass: RealRefreshRepository,
     },
     JwtStrategy,
   ],

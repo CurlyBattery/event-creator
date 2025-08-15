@@ -1,11 +1,15 @@
 import { RefreshTokenM } from '@auth/domain/model/refresh-token';
 import { RefreshRepository } from '@auth/infra/ports/refresh.repository';
 import { PrismaService } from '@common/database/infra/persistence/prisma.service';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class RealRefreshRepository implements RefreshRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   insert(refresh: RefreshTokenM): Promise<RefreshTokenM> {
+    console.log('PrismaService available:', !!this.prisma);
+
     return this.prisma.refreshToken.create({
       data: {
         uuid: refresh.uuid,

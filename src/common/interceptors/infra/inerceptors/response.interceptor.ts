@@ -5,6 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
+import { Response } from 'express';
 
 export class ResponseFormat<T> {
   isArray: boolean;
@@ -26,15 +27,56 @@ export class ResponseInterceptor<T>
     const now = Date.now();
     const httpContext = context.switchToHttp();
     const request = httpContext.getRequest();
+    const response = httpContext.getResponse<Response>();
 
-    return next.handle().pipe(
-      map((data) => ({
+    const originalJson = response.json.bind(response);
+
+    response.json = (data: any) => {
+      if (response.headersSent) {
+        return originalJson(data);
+      }
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        'isArray' in data &&
+        'path' in data
+      ) {
+        return originalJson(data);
+      }
+      const formattedResponse: ResponseFormat<any> = {
         data,
         isArray: Array.isArray(data),
         path: request.path,
         duration: `${Date.now() - now}ms`,
         method: request.method,
-      })),
+      };
+      return originalJson(formattedResponse);
+    };
+
+    return next.handle().pipe(
+      map((data) => {
+        if (response.headersSent) {
+          return data;
+        }
+        if (
+          data &&
+          typeof data === 'object' &&
+          'data' in data &&
+          'isArray' in data &&
+          'path' in data
+        ) {
+          return data;
+        }
+
+        return {
+          data,
+          isArray: Array.isArray(data),
+          path: request.path,
+          duration: `${Date.now() - now}ms`,
+          method: request.method,
+        };
+      }),
     );
   }
 }
