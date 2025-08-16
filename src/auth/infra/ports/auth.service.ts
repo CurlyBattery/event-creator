@@ -9,4 +9,7 @@ export abstract class AuthService {
   abstract logout(
     refresh: Omit<RefreshTokenM, 'userId'>,
   ): Promise<{ message: string }>;
+  abstract refreshTokens(
+    refresh: Omit<RefreshTokenM, 'userId'>,
+  ): Promise<TokensM>;
 }

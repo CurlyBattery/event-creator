@@ -15,6 +15,8 @@ import { ConfigService } from '@nestjs/config';
 import { addMilliseconds } from 'date-fns';
 import { RefreshTokenM } from '@auth/domain/model/refresh-token';
 import { DeleteRefreshUseCase } from '@auth/application/use-cases/delete-refresh.usecase';
+import { GetValidRefreshUseCase } from '@auth/application/use-cases/get-valid-refresh.usecase';
+import { GetUserByIdQuery } from '@auth/application/queries/get-user-by-id.query';
 
 @Injectable()
 export class RealAuthService implements AuthService {
@@ -33,6 +35,8 @@ export class RealAuthService implements AuthService {
     private readonly updateRefreshTokenUseCaseProxy: UseCaseProxy<CreateRefreshUseCase>,
     @Inject(AuthUseCasesProxyModule.DELETE_REFRESH_USECASES_PROXY)
     private readonly deleteRefreshTokenUseCaseProxy: UseCaseProxy<DeleteRefreshUseCase>,
+    @Inject(AuthUseCasesProxyModule.GET_VALID_REFRESH_USECASES_PROXY)
+    private readonly getValidRefreshTokenUseCaseProxy: UseCaseProxy<GetValidRefreshUseCase>,
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserM> {
@@ -95,6 +99,33 @@ export class RealAuthService implements AuthService {
       .execute(refresh.uuid);
 
     return { message: 'Successfully logged out' };
+  }
+
+  async refreshTokens(
+    refresh: Omit<RefreshTokenM, 'userId'>,
+  ): Promise<TokensM> {
+    // получение рефреш из бд по токену из куки
+    // если нет в бд - unauthorized
+    // если есть проверяем expires in, если больше чем текущая дата - unauthorized с сообщением токен истек
+    const token = await this.getValidRefreshTokenUseCaseProxy
+      .getInstance()
+      .execute(refresh.uuid);
+    // если не истек генерируем новую пару
+    const user = await this.queryBus.execute(
+      new GetUserByIdQuery(token.userId),
+    );
+
+    const { accessToken, refreshToken } = await this.issuingTokens(user);
+    // сохраняем рефреш в бд
+    const exp = this.getExp();
+
+    await this.updateRefreshTokenUseCaseProxy.getInstance().execute({
+      uuid: refreshToken,
+      userId: user.id,
+      exp,
+    });
+    // возвращаем новую пару
+    return { accessToken, refreshToken };
   }
 
   private async issuingTokens(user: UserM): Promise<TokensM> {

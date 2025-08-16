@@ -14,6 +14,7 @@ import { CqrsModule, QueryBus } from '@nestjs/cqrs';
 import { ExceptionsModule } from '@common/exceptions/exceptions.module';
 import { UpdateRefreshUseCase } from '@auth/application/use-cases/update-refresh.usecase';
 import { DeleteRefreshUseCase } from '@auth/application/use-cases/delete-refresh.usecase';
+import { GetValidRefreshUseCase } from '@auth/application/use-cases/get-valid-refresh.usecase';
 
 @Module({})
 export class AuthUseCasesProxyModule {
@@ -22,6 +23,7 @@ export class AuthUseCasesProxyModule {
   static POST_SAVE_REFRESH_USECASES_PROXY = 'postSaveRefreshUseCasesProxy';
   static PATCH_REFRESH_USECASES_PROXY = 'patchSaveRefreshUseCasesProxy';
   static DELETE_REFRESH_USECASES_PROXY = 'deleteRefreshUseCasesProxy';
+  static GET_VALID_REFRESH_USECASES_PROXY = 'getValidRefreshUseCaseProxy';
 
   static register(): DynamicModule {
     return {
@@ -66,6 +68,11 @@ export class AuthUseCasesProxyModule {
           DeleteRefreshUseCase,
           [RefreshRepository, AbstractException],
         ),
+        createUseCaseProvider(
+          this.GET_VALID_REFRESH_USECASES_PROXY,
+          GetValidRefreshUseCase,
+          [RefreshRepository, AbstractException],
+        ),
         UuidGeneratorService,
       ],
       exports: [
@@ -74,6 +81,7 @@ export class AuthUseCasesProxyModule {
         this.POST_SAVE_REFRESH_USECASES_PROXY,
         this.PATCH_REFRESH_USECASES_PROXY,
         this.DELETE_REFRESH_USECASES_PROXY,
+        this.GET_VALID_REFRESH_USECASES_PROXY,
       ],
     };
   }

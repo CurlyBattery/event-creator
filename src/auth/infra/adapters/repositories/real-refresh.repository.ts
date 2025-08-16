@@ -26,12 +26,6 @@ export class RealRefreshRepository implements RefreshRepository {
   async updateRefresh(
     refresh: Partial<RefreshTokenM> & { uuid: string },
   ): Promise<RefreshTokenM> {
-    console.log(refresh.userId);
-    const user = await this.prisma.refreshToken.findUnique({
-      where: { userId: refresh.userId },
-    });
-    console.log(user);
-
     return this.prisma.refreshToken.upsert({
       where: { userId: refresh.userId },
       update: refresh,

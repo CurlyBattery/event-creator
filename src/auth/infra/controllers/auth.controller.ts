@@ -71,7 +71,12 @@ export class AuthController {
 
   @Post('log-out')
   async logout(@Cookies(REFRESH_TOKEN) refreshToken: string) {
-    await this.authService.logout({ uuid: refreshToken });
+    return this.authService.logout({ uuid: refreshToken });
+  }
+
+  @Post('refresh-tokens')
+  async refreshTokens(@Cookies(REFRESH_TOKEN) refreshToken: string) {
+    return this.authService.refreshTokens({ uuid: refreshToken });
   }
 
   setRefreshTokenToCookie(response: Response, refreshToken: string) {
