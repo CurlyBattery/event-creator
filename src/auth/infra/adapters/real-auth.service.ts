@@ -90,15 +90,13 @@ export class RealAuthService implements AuthService {
     return { accessToken, refreshToken };
   }
 
-  async logout(
-    refresh: Omit<RefreshTokenM, 'userId'>,
-  ): Promise<{ message: string }> {
+  async logout(refresh: Omit<RefreshTokenM, 'userId'>): Promise<void> {
+    if (!refresh.uuid) return;
+
     // удаление рефреш токена из бд по refresh токену
     await this.deleteRefreshTokenUseCaseProxy
       .getInstance()
       .execute(refresh.uuid);
-
-    return { message: 'Successfully logged out' };
   }
 
   async refreshTokens(

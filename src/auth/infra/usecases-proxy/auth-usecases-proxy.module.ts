@@ -66,7 +66,7 @@ export class AuthUseCasesProxyModule {
         createUseCaseProvider(
           this.DELETE_REFRESH_USECASES_PROXY,
           DeleteRefreshUseCase,
-          [RefreshRepository, AbstractException],
+          [RefreshRepository],
         ),
         createUseCaseProvider(
           this.GET_VALID_REFRESH_USECASES_PROXY,

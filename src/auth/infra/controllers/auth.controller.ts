@@ -57,7 +57,10 @@ export class AuthController {
 
   @UseGuards(LocalGuard)
   @Post('sign-in')
-  async signIn(@Body() { email }: SignInDto, @Res() response: Response) {
+  async signIn(
+    @Body() { email }: SignInDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     // создание access токена
     // создание refresh токена
     // перезапись refresh токена в бд
@@ -70,8 +73,15 @@ export class AuthController {
   }
 
   @Post('log-out')
-  async logout(@Cookies(REFRESH_TOKEN) refreshToken: string) {
-    return this.authService.logout({ uuid: refreshToken });
+  async logout(
+    @Cookies(REFRESH_TOKEN) refreshToken: string,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    await this.authService.logout({ uuid: refreshToken });
+
+    this.removeRefreshTokenFromCookie(response);
+
+    return { message: 'Successfully logged out' };
   }
 
   @Post('refresh-tokens')
@@ -84,5 +94,9 @@ export class AuthController {
       httpOnly: true,
       maxAge: this.configService.get('AGE_REFRESH'),
     });
+  }
+
+  removeRefreshTokenFromCookie(response: Response) {
+    response.clearCookie(REFRESH_TOKEN);
   }
 }
