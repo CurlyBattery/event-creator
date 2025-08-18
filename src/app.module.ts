@@ -10,6 +10,7 @@ import { PrismaModule } from '@common/database/prisma.module';
 import { ConfigModule as MyConfigModule } from '@common/config/config.module';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
+import { EventModule } from '@event/event.module';
 
 type NestModuleImport =
   | Type<any>
@@ -25,6 +26,7 @@ const appModules: NestModuleImport[] = [
   InterceptorsModule,
   UserModule,
   AuthModule,
+  EventModule,
 ];
 
 // Infrastructure Modules(DB, config) used by the server

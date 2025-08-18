@@ -1,21 +1,9 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-
-export class CreateUserDto {
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  password: string;
-}
+import { IsEmail, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateUserDto {
   @IsOptional()
   @IsEmail()
+  @ApiProperty()
   email?: string;
-
-  @IsOptional()
-  @IsString()
-  refreshToken: string;
 }

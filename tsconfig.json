@@ -23,7 +23,9 @@
       "@common": ["src/common"],
       "@common/*": ["src/common/*"],
       "@auth": ["src/auth"],
-      "@auth/*": ["src/auth/*"]
+      "@auth/*": ["src/auth/*"],
+      "@event": ["src/event"],
+      "@event/*": ["src/event/*"],
     }
   }
 }

@@ -6,21 +6,24 @@ import {
   Validate,
 } from 'class-validator';
 import { IsMatchPasswords } from '@common/validators/match-passwords.validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SignUpDto {
   @IsEmail()
   @IsNotEmpty()
+  @ApiProperty()
   email: string;
 
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
+  @ApiProperty()
   password: string;
 
-  // сделать repeat password
   @Validate(IsMatchPasswords)
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
+  @ApiProperty()
   repeatPassword: string;
 }

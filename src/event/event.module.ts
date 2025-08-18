@@ -1,0 +1,29 @@
+import { Module } from '@nestjs/common';
+
+import { EventController } from '@event/infra/controllers/event.controller';
+import { EventRepository } from '@event/infra/ports/event.repository';
+import { EventService } from '@event/infra/ports/event.service';
+import { RealEventService } from '@event/infra/adapters/real-event.service';
+import { RealEventRepository } from '@event/infra/adapters/real-event.repository';
+import { SubscriptionRepository } from '@event/infra/ports/subscription.repository';
+import { RealSubscriptionRepository } from '@event/infra/adapters/real-subcription.repository';
+
+@Module({
+  imports: [],
+  controllers: [EventController],
+  providers: [
+    {
+      provide: EventRepository,
+      useClass: RealEventRepository,
+    },
+    {
+      provide: SubscriptionRepository,
+      useClass: RealSubscriptionRepository,
+    },
+    {
+      provide: EventService,
+      useClass: RealEventService,
+    },
+  ],
+})
+export class EventModule {}
