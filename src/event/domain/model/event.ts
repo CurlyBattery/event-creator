@@ -3,5 +3,7 @@ export class EventM {
   title: string;
   description: string;
   date: Date;
+  isPublish: boolean;
+  places: number;
   creatorId: string;
 }
