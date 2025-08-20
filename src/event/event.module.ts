@@ -7,9 +7,12 @@ import { RealEventService } from '@event/infra/adapters/real-event.service';
 import { RealEventRepository } from '@event/infra/adapters/real-event.repository';
 import { SubscriptionRepository } from '@event/infra/ports/subscription.repository';
 import { RealSubscriptionRepository } from '@event/infra/adapters/real-subcription.repository';
+import { SubscriptionService } from '@event/infra/ports/subscription.service';
+import { RealSubscriptionService } from '@event/infra/adapters/real-subscription.service';
+import { ExceptionsModule } from '@common/exceptions/exceptions.module';
 
 @Module({
-  imports: [],
+  imports: [ExceptionsModule],
   controllers: [EventController],
   providers: [
     {
@@ -23,6 +26,10 @@ import { RealSubscriptionRepository } from '@event/infra/adapters/real-subcripti
     {
       provide: EventService,
       useClass: RealEventService,
+    },
+    {
+      provide: SubscriptionService,
+      useClass: RealSubscriptionService,
     },
   ],
 })
