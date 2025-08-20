@@ -4,16 +4,16 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UpdateEventDto {
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ example: 'updatedtitle', required: false })
   title?: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ example: 'updateddescription', required: false })
   description?: string;
 
   @IsNumber()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ example: 101, required: false })
   places?: number;
 }

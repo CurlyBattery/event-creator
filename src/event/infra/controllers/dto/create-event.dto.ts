@@ -4,21 +4,21 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateEventDto {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'Мероприятие номер 1' })
   title: string;
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'На этом мероприятии будут пить чай' })
   description: string;
 
   @IsDateString()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: '2025-09-22T00:00:00.000Z' })
   date: Date;
 
   @IsNumber()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 100 })
   places: number;
 }
