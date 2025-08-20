@@ -6,6 +6,6 @@ export abstract class EventService {
   abstract findOne(id: string): Promise<EventM>;
   abstract update(id: string, event: Partial<EventM>): Promise<EventM>;
   abstract delete(id: string): Promise<EventM>;
-  abstract publish(id: string): Promise<EventM>; // перевести в статус опубликовано
+  abstract publish(id: string): Promise<EventM>;
   abstract reschedule(id: string, newDate: Date): Promise<EventM>;
 }

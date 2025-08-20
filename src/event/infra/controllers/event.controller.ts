@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 
 import { EventService } from '@event/infra/ports/event.service';
-import { SubscriptionService } from '@event/infra/ports/subscription.service';
 import { AccessTokenPayload } from '@auth/infra/types/access-token.payload';
 import { AuthUser } from '@common/decorators/auth-user.decorator';
 import { JwtGuard } from '@auth/infra/guards/jwt.guard';
@@ -27,8 +26,6 @@ import { RescheduleDto } from '@event/infra/controllers/dto/reschedule.dto';
 export class EventController {
   constructor(
     @Inject(EventService) private readonly eventService: EventService,
-    @Inject(SubscriptionService)
-    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   @Post()
