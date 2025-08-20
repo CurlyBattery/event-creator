@@ -11,7 +11,7 @@ export class GetUserByIdUseCase {
   async execute(id: string): Promise<UserM> {
     const user = await this.userRepository.getUserById(id);
     if (!user) {
-      this.exceptionsService.badRequestException({
+      this.exceptionsService.notFoundException({
         message: 'User Not Found',
         codeError: 404,
       });

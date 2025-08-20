@@ -11,19 +11,19 @@ import { ApiProperty } from '@nestjs/swagger';
 export class SignUpDto {
   @IsEmail()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'example@gmail.com' })
   email: string;
 
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'asdfjkl' })
   password: string;
 
   @Validate(IsMatchPasswords)
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ example: 'asdfjkl' })
   repeatPassword: string;
 }

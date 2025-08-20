@@ -14,9 +14,9 @@ export class GetValidRefreshUseCase {
     const refresh = await this.refreshRepository.getRefreshById(uuid);
 
     if (!refresh) {
-      this.exceptionService.unauthorizedException({
+      this.exceptionService.notFoundException({
         message: 'Not Found Refresh Token',
-        codeError: 402,
+        codeError: 404,
       });
     }
 

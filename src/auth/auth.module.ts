@@ -12,6 +12,8 @@ import { PrismaModule } from '@common/database/prisma.module';
 import { RefreshRepositoryModule } from '@auth/infra/adapters/repositories/refresh-repository.module';
 import { LocalStrategy } from '@auth/infra/strategies/local.strategy';
 import { ExceptionsModule } from '@common/exceptions/exceptions.module';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 const Strategies = [JwtStrategy, LocalStrategy];
 
@@ -22,6 +24,15 @@ const Strategies = [JwtStrategy, LocalStrategy];
     PrismaModule,
     RefreshRepositoryModule,
     ExceptionsModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: configService.get<string>('EXPIRES_IN') },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AuthController],
   providers: [

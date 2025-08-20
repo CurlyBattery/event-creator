@@ -4,6 +4,8 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UpdateUserDto {
   @IsOptional()
   @IsEmail()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'updatedmail@gmail.com',
+  })
   email?: string;
 }

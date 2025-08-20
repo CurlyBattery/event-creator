@@ -9,6 +9,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
   Inject,
   Post,
@@ -19,13 +20,28 @@ import { Response } from 'express';
 
 import { SignUpDto } from '@auth/infra/controllers/dto/sign-up.dto';
 import { JwtGuard } from '@auth/infra/guards/jwt.guard';
-import { AccessTokenPayload } from '@auth/infra/types/access-token.payload';
+import {
+  AccessTokenPayload,
+  AccessTokenPayloadDto,
+} from '@auth/infra/types/access-token.payload';
 import { AuthUser } from '@common/decorators/auth-user.decorator';
 import { AuthService } from '@auth/infra/ports/auth.service';
 import { ConfigService } from '@nestjs/config';
 import { LocalGuard } from '@auth/infra/guards/local.guard';
 import { SignInDto } from '@auth/infra/controllers/dto/sign-in.dto';
 import { Cookies } from '@common/decorators/cookie.decorator';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { TokensM } from '@auth/domain/model/tokens';
+import { SuccessDto } from '@common/dtos/success.dto';
 
 export const REFRESH_TOKEN = 'refreshtoken';
 
@@ -37,6 +53,14 @@ export class AuthController {
   ) {}
 
   @Post('sign-up')
+  @ApiOperation({ summary: 'Регистрация нового пользователя' })
+  @ApiBody({
+    type: SignUpDto,
+  })
+  @ApiCreatedResponse({ type: TokensM })
+  @ApiConflictResponse({
+    description: 'Пользователь с таким email используется',
+  })
   async signUp(@Body() signUpDto: SignUpDto, @Res() response: Response) {
     const { email, password } = signUpDto;
 
@@ -51,12 +75,28 @@ export class AuthController {
 
   @UseGuards(JwtGuard)
   @Get('me')
+  @ApiOperation({ summary: 'Получить данные пользователя из токена' })
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({ description: 'Нужно войти в систему' })
+  @ApiOkResponse({ type: AccessTokenPayloadDto })
   authenticate(@AuthUser() user: AccessTokenPayload) {
     return user;
   }
 
   @UseGuards(LocalGuard)
   @Post('sign-in')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Вход в систему и получение access и refresh токенов',
+  })
+  @ApiBody({ type: SignInDto })
+  @ApiUnauthorizedResponse({
+    description: 'Пароль не совпадает с паролем в бд',
+  })
+  @ApiNotFoundResponse({
+    description: 'Пользователь не найден с введенным email',
+  })
+  @ApiOkResponse({ type: TokensM })
   async signIn(
     @Body() { email }: SignInDto,
     @Res({ passthrough: true }) response: Response,
@@ -72,7 +112,15 @@ export class AuthController {
     response.status(HttpStatus.CREATED).json({ accessToken, refreshToken });
   }
 
+  @UseGuards(JwtGuard)
   @Post('log-out')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Удаление refresh токена из бд и cookie. Выход из системы',
+  })
+  @ApiUnauthorizedResponse({ description: 'Нужно войти в систему' })
+  @ApiOkResponse({ type: SuccessDto })
   async logout(
     @Cookies(REFRESH_TOKEN) refreshToken: string,
     @Res({ passthrough: true }) response: Response,
@@ -85,6 +133,15 @@ export class AuthController {
   }
 
   @Post('refresh-tokens')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Получить новую пару токенов по refresh токену из cookie',
+  })
+  @ApiNotFoundResponse({ description: 'Refresh токен не найден в бд' })
+  @ApiUnauthorizedResponse({
+    description: 'У refresh токена истек срок действия',
+  })
+  @ApiOkResponse({ type: TokensM })
   async refreshTokens(@Cookies(REFRESH_TOKEN) refreshToken: string) {
     return this.authService.refreshTokens({ uuid: refreshToken });
   }
