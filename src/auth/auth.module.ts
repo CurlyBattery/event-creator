@@ -14,6 +14,10 @@ import { LocalStrategy } from '@auth/infra/strategies/local.strategy';
 import { ExceptionsModule } from '@common/exceptions/exceptions.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { VerificationService } from '@auth/infra/ports/verification.service';
+import { RealVerificationService } from '@auth/infra/adapters/real-verification.service';
+import { UserVerificationRepository } from '@auth/infra/ports/user-verification.repository';
+import { RealUserVerificationRepository } from '@auth/infra/adapters/real-user-verification.repository';
 
 const Strategies = [JwtStrategy, LocalStrategy];
 
@@ -43,6 +47,14 @@ const Strategies = [JwtStrategy, LocalStrategy];
     {
       provide: HashingService,
       useClass: RealHashingService,
+    },
+    {
+      provide: VerificationService,
+      useClass: RealVerificationService,
+    },
+    {
+      provide: UserVerificationRepository,
+      useClass: RealUserVerificationRepository,
     },
     ...Strategies,
   ],

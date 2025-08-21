@@ -129,7 +129,7 @@ export class RealAuthService implements AuthService {
   private async issuingTokens(user: UserM): Promise<TokensM> {
     const accessToken = await this.generateAccessTokenUseCaseProxy
       .getInstance()
-      .execute(user.id);
+      .execute(user.id, user.email);
     const refreshToken = await this.generateRefreshTokenUseCaseProxy
       .getInstance()
       .execute();

@@ -15,14 +15,16 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  email    String @unique
-  password String
+  id         String  @id @default(uuid())
+  email      String  @unique
+  password   String
+  isVerified Boolean @default(false)
 
   events       Event[]
   comments     Comment[]
   subs         Subscription[]
   refreshToken RefreshToken?
+  verification UserVerification?
 
   @@map("users")
 }
@@ -75,4 +77,15 @@ model Subscription {
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@map("subscriptions")
+}
+
+model UserVerification {
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
+  code      Int
+  expiresAt DateTime @map("expires_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_verifications")
 }

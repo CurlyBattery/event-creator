@@ -42,6 +42,8 @@ import {
 } from '@nestjs/swagger';
 import { TokensM } from '@auth/domain/model/tokens';
 import { SuccessDto } from '@common/dtos/success.dto';
+import { ValidateCodeDto } from '@auth/infra/controllers/dto/validate-code.dto';
+import { VerificationService } from '@auth/infra/ports/verification.service';
 
 export const REFRESH_TOKEN = 'refreshtoken';
 
@@ -49,6 +51,8 @@ export const REFRESH_TOKEN = 'refreshtoken';
 export class AuthController {
   constructor(
     @Inject(AuthService) private readonly authService: AuthService,
+    @Inject(VerificationService)
+    private readonly verificationService: VerificationService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -144,6 +148,33 @@ export class AuthController {
   @ApiOkResponse({ type: TokensM })
   async refreshTokens(@Cookies(REFRESH_TOKEN) refreshToken: string) {
     return this.authService.refreshTokens({ uuid: refreshToken });
+  }
+
+  // добавить сваггер
+  @UseGuards(JwtGuard)
+  @Post('verification')
+  async verificationAccount(@AuthUser() user: AccessTokenPayload) {
+    // сгенерировать код
+    // upsert код и время жизни в бд
+    // отправить на почту user.email код и ссылку на frontend страницу с вводом кода и запросом на validateCode()
+    // вернуть сообщение о успешном отправлении
+    await this.verificationService.generateCode(user.sub);
+    return { message: 'Code Send To Mail' };
+  }
+
+  // добавить сваггер
+  @UseGuards(JwtGuard)
+  @Post('validate-code')
+  async validateCode(
+    @Body() dto: ValidateCodeDto,
+    @AuthUser() user: AccessTokenPayload,
+  ) {
+    // принимаем код
+    // сравнием с тем что в бд
+    // если свопадает, обновляем по id у User поле isVerified в true
+    // если нет кидаем ошибку bad request
+    await this.verificationService.verifyCode(user.sub, dto.code);
+    return { message: 'Account Verified' };
   }
 
   setRefreshTokenToCookie(response: Response, refreshToken: string) {

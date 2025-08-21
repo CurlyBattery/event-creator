@@ -8,6 +8,12 @@ export class AccessTokenPayloadDto implements AccessTokenPayload {
   @ApiProperty({ example: 'uuidauthuser' })
   sub: string;
 
+  @ApiProperty({ example: 'example@gmail.com' })
+  email: string;
+
+  @ApiProperty({ example: false })
+  isVerified: boolean;
+
   @ApiProperty({ example: 1234, description: 'Время, когда был создан токен' })
   iat?: number;
 
