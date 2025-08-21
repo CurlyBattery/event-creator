@@ -171,7 +171,7 @@ export class AuthController {
   ) {
     // принимаем код
     // сравнием с тем что в бд
-    // если свопадает, обновляем по id у User поле isVerified в true
+    // если свопадает, обновляем по id у User поле isVerified в true(отправляем команду cqrs)
     // если нет кидаем ошибку bad request
     await this.verificationService.verifyCode(user.sub, dto.code);
     return { message: 'Account Verified' };

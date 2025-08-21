@@ -9,10 +9,23 @@ export class RealUserVerificationRepository
 {
   constructor(private readonly prisma: PrismaService) {}
 
-  upsertUserVerification(
-    userVerification: UserVerificationM,
-  ): Promise<UserVerificationM> {
-    throw new Error(`${userVerification} not implemented and ${this.prisma}`);
+  upsertUserVerification({
+    userId,
+    code,
+    expiresAt,
+  }: UserVerificationM): Promise<UserVerificationM> {
+    return this.prisma.userVerification.upsert({
+      where: { userId },
+      update: {
+        code,
+        expiresAt,
+      },
+      create: {
+        userId,
+        expiresAt,
+        code,
+      },
+    });
   }
 
   getByUserId(userId: string): Promise<UserVerificationM> {
