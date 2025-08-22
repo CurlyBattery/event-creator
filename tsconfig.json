@@ -26,6 +26,8 @@
       "@auth/*": ["src/auth/*"],
       "@event": ["src/event"],
       "@event/*": ["src/event/*"],
+      "@notifications": ["src/notifications"],
+      "@notifications/*": ["src/notifications/*"]
     }
   }
 }

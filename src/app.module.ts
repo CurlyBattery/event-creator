@@ -11,6 +11,7 @@ import { ConfigModule as MyConfigModule } from '@common/config/config.module';
 import { UserModule } from '@user/user.module';
 import { AuthModule } from '@auth/auth.module';
 import { EventModule } from '@event/event.module';
+import { NotificationsModule } from '@notifications/notifications.module';
 
 type NestModuleImport =
   | Type<any>
@@ -27,6 +28,7 @@ const appModules: NestModuleImport[] = [
   UserModule,
   AuthModule,
   EventModule,
+  NotificationsModule,
 ];
 
 // Infrastructure Modules(DB, config) used by the server
