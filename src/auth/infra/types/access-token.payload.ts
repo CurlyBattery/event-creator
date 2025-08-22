@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export type AccessTokenPayload = {
   sub: string;
+  email: string;
+  isVerified: boolean;
 };
 
 export class AccessTokenPayloadDto implements AccessTokenPayload {

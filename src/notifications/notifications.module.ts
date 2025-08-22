@@ -3,6 +3,9 @@ import { CqrsModule } from '@nestjs/cqrs';
 
 import { RealNotificationsService } from '@notifications/infra/adapters/real-notifications.service';
 import { NotificationsService } from '@notifications/infra/ports/notifications.service';
+import { SendVerificationCodeEmailHandler } from '@notifications/application/commands/send-code.command';
+
+const CommandHandlers = [SendVerificationCodeEmailHandler];
 
 @Global()
 @Module({
@@ -12,6 +15,7 @@ import { NotificationsService } from '@notifications/infra/ports/notifications.s
       provide: NotificationsService,
       useClass: RealNotificationsService,
     },
+    ...CommandHandlers,
   ],
 })
 export class NotificationsModule {}

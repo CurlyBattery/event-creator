@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UserWithoutPassword {
   @ApiProperty({ example: 'uuid' })
@@ -6,6 +6,9 @@ export class UserWithoutPassword {
 
   @ApiProperty({ example: 'defaultmail@gmail.com' })
   email: string;
+
+  @ApiPropertyOptional({ example: true })
+  isVerified?: boolean;
 }
 
 export class UserM extends UserWithoutPassword {

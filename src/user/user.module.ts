@@ -9,12 +9,11 @@ import { CreateUserHandler } from '@user/application/handlers/create-user.handle
 import { UserRepositoryModule } from '@user/infra/adapters/repositories/user/user-repository.module';
 import { GetUserByEmailHandler } from '@user/application/handlers/get-user-by-email.handler';
 import { GetUserByIdHandler } from '@user/application/handlers/get-user-by-id.handler';
+import { UpdateUserHandler } from '@user/application/commands/update-user.command';
 
-const QueryHandlers = [
-  CreateUserHandler,
-  GetUserByIdHandler,
-  GetUserByEmailHandler,
-];
+const QueryHandlers = [GetUserByIdHandler, GetUserByEmailHandler];
+
+const CommandHandlers = [CreateUserHandler, UpdateUserHandler];
 
 @Module({
   imports: [
@@ -25,6 +24,6 @@ const QueryHandlers = [
     CqrsModule,
   ],
   controllers: [UserController],
-  providers: [...QueryHandlers],
+  providers: [...QueryHandlers, ...CommandHandlers],
 })
 export class UserModule {}

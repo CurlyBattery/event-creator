@@ -29,6 +29,8 @@ export class RealUserVerificationRepository
   }
 
   getByUserId(userId: string): Promise<UserVerificationM> {
-    throw new Error(`${userId} not implemented`);
+    return this.prisma.userVerification.findUnique({
+      where: { userId },
+    });
   }
 }

@@ -158,7 +158,7 @@ export class AuthController {
     // upsert код и время жизни в бд
     // отправить на почту user.email код и ссылку на frontend страницу с вводом кода и запросом на validateCode()
     // вернуть сообщение о успешном отправлении
-    await this.verificationService.generateCode(user.sub);
+    await this.verificationService.generateCode(user);
     return { message: 'Code Send To Mail' };
   }
 
@@ -171,7 +171,7 @@ export class AuthController {
   ) {
     // принимаем код
     // сравнием с тем что в бд
-    // если свопадает, обновляем по id у User поле isVerified в true(отправляем команду cqrs)
+    // если свопадает, обновляем по id у User поле isVerified в true(отправляем команду cqrs), и если время не вышло
     // если нет кидаем ошибку bad request
     await this.verificationService.verifyCode(user.sub, dto.code);
     return { message: 'Account Verified' };
