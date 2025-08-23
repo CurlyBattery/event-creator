@@ -20,7 +20,6 @@ export class SendVerificationCodeEmailHandler
 
   async execute(command: SendVerificationCodeEmail): Promise<void> {
     const { email, verificationCode } = command;
-    console.log(123);
     await this.mailService.sendMail({ to: email, verificationCode });
   }
 }

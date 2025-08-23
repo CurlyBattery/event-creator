@@ -21,9 +21,10 @@ export class RealNotificationsService implements NotificationsService {
   }
 
   async sendMail(payload: VerificationCodeEmailPayload): Promise<void> {
+    console.log(payload);
     await this.nodemailerTransport.sendMail({
       to: payload.to,
-      text: `Code: ${payload.verificationCode}`,
+      text: `Пиdор: ${payload.verificationCode}}`,
     });
   }
 }

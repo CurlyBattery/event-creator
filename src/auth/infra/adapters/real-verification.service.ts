@@ -35,7 +35,7 @@ export class RealVerificationService implements VerificationService {
       await this.commandBus.execute(
         new SendVerificationCodeEmail(user.email, randomSixDigit),
       );
-    } catch {
+    } catch (e) {
       this.exceptionsService.badRequestException({
         message: 'Message not sending',
         codeError: 400,

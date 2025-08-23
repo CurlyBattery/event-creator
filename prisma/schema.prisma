@@ -15,10 +15,11 @@ datasource db {
 }
 
 model User {
-  id         String  @id @default(uuid())
-  email      String  @unique
-  password   String
-  isVerified Boolean @default(false)
+  id               String           @id @default(uuid())
+  email            String           @unique
+  password         String
+  isVerified       Boolean          @default(false)
+  subscriptionPlan SubscriptionPlan @default(FREE) @map("subscription_plan")
 
   events       Event[]
   comments     Comment[]
@@ -88,4 +89,9 @@ model UserVerification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_verifications")
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
 }
