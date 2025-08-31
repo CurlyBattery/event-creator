@@ -29,7 +29,10 @@ export class RealUserRepository implements UserRepository {
     return this.prisma.user.findMany();
   }
 
-  updateUser(id: string, user: Omit<UserM, 'password'>): Promise<UserM> {
+  updateUser(
+    id: string,
+    user: Partial<Omit<UserM, 'password'>>,
+  ): Promise<UserM> {
     return this.prisma.user.update({
       where: { id },
       data: user,

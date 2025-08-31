@@ -1,7 +1,7 @@
 import { UserM } from '@user/domain/model/user';
 
 export abstract class SubscriptionPlanService {
-  abstract upgrade(): boolean | Promise<boolean>;
-  abstract me(): Pick<UserM, 'subscriptionPlan'>;
-  abstract cancel(): boolean | Promise<boolean>;
+  abstract upgrade(id: string): Promise<boolean>;
+  abstract me(id: string): Promise<Pick<UserM, 'subscriptionPlan'>>;
+  abstract cancel(id: string): Promise<boolean>;
 }

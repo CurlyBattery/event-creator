@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { SubcriptionPlan } from '@user/domain/events/subcription-plan';
 import { SubscriptionPlan } from '../../../../generated/prisma';
+import { SubscriptionPlanM } from '@user/domain/model/subscription-plan';
 
 export class UserWithoutPassword {
   @ApiProperty({ example: 'uuid' })
@@ -12,7 +12,7 @@ export class UserWithoutPassword {
   @ApiPropertyOptional({ example: true })
   isVerified?: boolean;
 
-  @ApiPropertyOptional({ example: SubcriptionPlan.FREE })
+  @ApiPropertyOptional({ example: SubscriptionPlanM.FREE })
   subscriptionPlan?: SubscriptionPlan;
 }
 
